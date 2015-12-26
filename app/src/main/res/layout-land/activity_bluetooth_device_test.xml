@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+    <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical" android:padding="5dp" android:id="@+id/relativeLayout">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="L1"
+                android:id="@+id/L1"
+                android:padding="6dp" android:gravity="center"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="L2"
+                android:id="@+id/L2"
+                android:layout_toRightOf="@+id/L1"
+                android:padding="6dp" android:layout_marginLeft="8dp" android:gravity="center"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="R2"
+                android:id="@+id/R2"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="6dp" android:layout_marginLeft="8dp" android:gravity="center"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="R1"
+                android:id="@+id/R1"
+                android:layout_toLeftOf="@id/R2"
+                android:padding="6dp" android:gravity="center"/>
+    </RelativeLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" android:layout_below="@+id/relativeLayout"
+            android:layout_alignParentLeft="true">
+        <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent" android:layout_weight="1" android:padding="8dp">
+            <com.rhodes.demo.customview.AnalogView
+                    android:id="@+id/ANALOG_L"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp" android:layout_gravity="bottom"
+                    android:layout_alignParentBottom="true" android:layout_alignParentLeft="true"
+                    android:layout_marginTop="5dp"/>
+            <TableLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                         android:minWidth="100dp" android:minHeight="100dp" android:id="@+id/tableLayout"
+                         android:layout_above="@id/ANALOG_L">
+                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
+                              android:layout_height="wrap_content" android:id="@+id/linearLayout3"
+                              android:layout_weight="1">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text=" "
+                              android:id="@+id/textView2" android:layout_weight="1"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text="↑"
+                              android:id="@+id/UP" android:layout_alignTop="@+id/textView10"
+                              android:layout_toLeftOf="@+id/textView10"
+                              android:gravity="center" android:layout_weight="1" android:textStyle="bold"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text=" "
+                              android:id="@+id/textView7" android:layout_weight="1"/>
+                </LinearLayout>
+                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
+                              android:layout_height="wrap_content" android:layout_below="@+id/linearLayout3"
+                              android:layout_alignParentLeft="true" android:id="@+id/linearLayout4"
+                              android:layout_weight="1">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text="←"
+                              android:id="@+id/LEFT" android:layout_above="@+id/textView6"
+                              android:layout_alignRight="@+id/textView6" android:layout_weight="1"
+                              android:textStyle="bold" android:gravity="center"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text=" "
+                              android:id="@+id/textView9" android:layout_weight="1"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text="→"
+                              android:id="@+id/RIGHT" android:gravity="center"
+                              android:layout_alignParentBottom="true"
+                              android:layout_alignParentRight="true" android:layout_weight="1"
+                              android:textStyle="bold"/>
+                </LinearLayout>
+                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
+                              android:layout_height="wrap_content" android:layout_below="@+id/linearLayout4"
+                              android:layout_alignParentLeft="true" android:layout_weight="1">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text=" "
+                              android:id="@+id/textView11" android:layout_weight="1"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text="↓"
+                              android:id="@+id/DOWN" android:layout_above="@+id/textView10"
+                              android:layout_alignLeft="@+id/textView10"
+                              android:gravity="center" android:layout_weight="1" android:textStyle="bold"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text=" "
+                              android:id="@+id/textView13" android:layout_weight="1"/>
+                </LinearLayout>
+            </TableLayout>
+        </RelativeLayout>
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent" android:padding="8dp">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="SELECT"
+                    android:id="@+id/SELECT" android:padding="6dp" android:layout_alignParentBottom="true"
+                    android:gravity="center"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="START"
+                    android:id="@+id/START"
+                    android:layout_alignParentTop="false" android:layout_centerHorizontal="true" android:padding="6dp"
+                    android:layout_alignParentBottom="true" android:layout_toRightOf="@+id/SELECT"
+                    android:gravity="center" android:layout_marginLeft="5dp"/>
+        </RelativeLayout>
+        <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent" android:padding="8dp" android:layout_weight="1"
+                >
+            <TableLayout
+                    android:id="@+id/joystick_btn_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true" android:minWidth="100dp" android:minHeight="100dp">
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:id="@+id/linearLayout"
+                        android:layout_weight="1">
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text=" "
+                            android:id="@+id/textView" android:layout_weight="1"/>
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Y"
+                            android:id="@+id/Y" android:layout_alignTop="@+id/B"
+                            android:layout_toLeftOf="@+id/B" android:gravity="center" android:layout_weight="1"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text=" "
+                              android:id="@+id/aaa" android:layout_weight="1"/>
+                </LinearLayout>
+                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
+                              android:layout_height="wrap_content" android:layout_below="@+id/linearLayout"
+                              android:layout_alignParentLeft="true" android:id="@+id/linearLayout2"
+                              android:layout_weight="1">
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="X"
+                            android:id="@+id/X"
+                            android:gravity="center" android:layout_above="@+id/Y" android:layout_alignRight="@+id/Y"
+                            android:layout_weight="1"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text=" "
+                              android:id="@+id/textView3" android:layout_weight="1"/>
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="B"
+                            android:id="@+id/B"
+                            android:gravity="center" android:layout_alignParentBottom="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_weight="1"/>
+                </LinearLayout>
+                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
+                              android:layout_height="wrap_content" android:layout_below="@+id/linearLayout2"
+                              android:layout_alignParentLeft="true" android:layout_weight="1">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text=" "
+                              android:id="@+id/textView4" android:layout_weight="1"/>
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="A"
+                            android:id="@+id/A"
+                            android:layout_above="@+id/B" android:layout_alignLeft="@+id/B" android:gravity="center"
+                            android:layout_weight="1"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                              android:textAppearance="?android:attr/textAppearanceMedium" android:text=" "
+                              android:id="@+id/textView5" android:layout_weight="1"/>
+                </LinearLayout>
+            </TableLayout>
+            <com.rhodes.demo.customview.AnalogView android:id="@+id/ANALOG_R"
+                                                   android:layout_width="100dp"
+                                                   android:layout_height="100dp"
+                                                   android:layout_gravity="bottom"
+                                                   android:layout_alignParentRight="true"
+                                                   android:layout_above="@+id/joystick_btn_container"
+                                                   android:layout_marginBottom="5dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

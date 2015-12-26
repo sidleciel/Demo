@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bluetooth_device_test_key_default">#C1C1C1</color>
+    <color name="bluetooth_device_test_key_pressed">#2C8FD0</color>
+</resources>

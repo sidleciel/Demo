@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Demo</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_enable">Enable</string>
+    <string name="action_disable">Disable</string>
+    <string name="action_scan">Scan</string>
+    <string name="action_show_all">ShowAll</string>
+    <string name="action_show_bonded">ShowBonded</string>
+    <string name="action_show_connected">ShowConnected</string>
+    <string name="action_settings_bt">SettingsBT</string>
+    <string name="action_test_input">TestInput</string>
+</resources>

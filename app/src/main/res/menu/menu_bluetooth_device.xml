@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".BluetoothDeviceActivity">
+    <item android:id="@+id/action_enable" android:title="@string/action_disable"
+        android:orderInCategory="100" android:showAsAction="always" />
+    <item android:id="@+id/action_scan" android:title="@string/action_scan"
+        android:orderInCategory="101" android:showAsAction="always" />
+    <item android:id="@+id/action_show_device_all" android:title="@string/action_show_all"
+        android:orderInCategory="102" android:showAsAction="never" />
+    <item android:id="@+id/action_show_device_bonded" android:title="@string/action_show_bonded"
+        android:orderInCategory="103" android:showAsAction="never" />
+    <item android:id="@+id/action_show_device_connected" android:title="@string/action_show_connected"
+        android:orderInCategory="104" android:showAsAction="never" />
+    <item android:id="@+id/action_test_input" android:title="@string/action_test_input"
+          android:orderInCategory="105" android:showAsAction="never" />
+    <item android:id="@+id/action_settings_bt" android:title="@string/action_settings_bt"
+          android:orderInCategory="106" android:showAsAction="never" />
+</menu>

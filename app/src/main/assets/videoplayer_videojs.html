@@ -1,0 +1,38 @@
+<head>
+    <meta name="viewport" content="width=device-width">
+    <link href="http://vjs.zencdn.net/5.3.0/video-js.css" rel="stylesheet">
+    <style type="text/css" adt="123">
+        body {
+        height: 100%;
+        margin: 0;
+        <!--background-color: #000000;-->
+        }
+        .video-js{
+        width: 100%;
+        height: 100%;
+        <!--margin-top: 50%;-->
+        <!--vertical-align: middle;-->
+        }
+        .my-video-dimensions{
+        width: 100%;
+        height: 100%;
+        }
+    </style>
+
+    <!-- If you'd like to support IE8 -->
+    <script src="http://vjs.zencdn.net/ie8/1.1.0/videojs-ie8.min.js"></script>
+</head>
+
+<body>
+<video id="my-video" class="video-js vjs-big-play-centered" controls preload="auto"
+       poster="MY_VIDEO_POSTER.jpg" data-setup="{}">
+    <source src="http://7xozte.com1.z0.glb.clouddn.com/devNexus%206-%20Space%20to%20explore.mp4"
+            type='video/mp4'>
+    <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a web browser that
+        <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+    </p>
+</video>
+
+<script src="http://vjs.zencdn.net/5.3.0/video.js"></script>
+</body>
