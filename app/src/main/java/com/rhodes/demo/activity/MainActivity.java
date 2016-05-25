@@ -20,6 +20,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
 
     enum Functions {
+        Animation(AnimationActivity.class),
         ServerRequest(ServerRequestActivity.class),
         BluetoothDevice(BluetoothDeviceActivity.class),
         DeviceInfo(DeviceInfoActivity.class),
@@ -64,12 +65,20 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, titles);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
+
+
+//        startActivity(3);
+//        finish();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent();
-        ComponentName cn = new ComponentName(this, classes.get(position));
+        startActivity(position);
+    }
+
+    public void startActivity(int pos) {
+        Intent        intent = new Intent();
+        ComponentName cn     = new ComponentName(this, classes.get(pos));
 
         intent.setComponent(cn);
         startActivity(intent);

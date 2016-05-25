@@ -1,15 +1,18 @@
 package com.rhodes.demo.activity;
 
 import android.annotation.TargetApi;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.hardware.usb.UsbDevice;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
+import android.view.InputDevice;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +20,16 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import com.rhodes.demo.R;
+import com.rhodes.demo.Util.ClassUtil;
 import com.rhodes.demo.Util.Logger;
+import com.rhodes.demo.bluetooth.BtManager;
+import com.rhodes.demo.bluetooth.BtObserver;
+import com.rhodes.demo.joystick.inputmanagercompat.InputManagerCompat;
+import com.rhodes.demo.usb.MyUsbManager;
+import com.rhodes.demo.usb.MyUsbOberver;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by xiet on 2015/10/21.
@@ -46,17 +53,32 @@ public class DeviceInfoActivity extends ActionBarActivity {
         infoListView.setGroupIndicator(null);
     }
 
-    private void init() {
-        fillScreenInfo();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mBtManager != null) {
+            mBtManager.close();
+        }
     }
 
+    private void init() {
+        fillScreenInfo();
+
+        initInputManager();
+        initBtManager();
+        initUsbManager();
+        fillGameControllerCountInfo();
+    }
+
+    //region ScreenInfo
     private void fillScreenInfo() {
         String section = "Screen";
         clearSection(section);
 
-        Resources res = getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        String dpiType = "";
+        Resources      res     = getResources();
+        DisplayMetrics dm      = res.getDisplayMetrics();
+        String         dpiType = "";
         if (dm.densityDpi >= DisplayMetrics.DENSITY_XXXHIGH) {
             dpiType = "xxxhdpi";
         } else if (dm.densityDpi >= DisplayMetrics.DENSITY_XXHIGH) {
@@ -92,15 +114,187 @@ public class DeviceInfoActivity extends ActionBarActivity {
 
         addSection(section, infos);
     }
+    //endregion
 
+    //region GameControllerCount
+
+    //region init input manager
+    private InputManagerCompat mInputManager;
+
+    private void initInputManager() {
+        mInputManager = InputManagerCompat.Factory.getInputManager(this);
+
+        InputManagerCompat.InputDeviceListener mInputDeviceListener = new InputManagerCompat.InputDeviceListener() {
+            @Override
+            public void onInputDeviceAdded(int deviceId) {
+                fillGameControllerCountInfo();
+            }
+
+            @Override
+            public void onInputDeviceChanged(int deviceId) {
+                fillGameControllerCountInfo();
+            }
+
+            @Override
+            public void onInputDeviceRemoved(int deviceId) {
+                fillGameControllerCountInfo();
+            }
+        };
+        mInputManager.registerInputDeviceListener(mInputDeviceListener, null);
+    }
+    //endregion
+
+    //region init bt manager
+    private BtManager mBtManager;
+
+    private void initBtManager() {
+        mBtManager = new BtManager();
+        mBtManager.establish(this, ClassUtil.getInputDeviceHiddenConstant());
+        mBtManager.addBtObserver(new BtObserver() {
+            @Override
+            public void onConnectionChanged(int size, List<BluetoothDevice> devices) {
+                fillGameControllerCountInfo();
+            }
+        });
+    }
+    //endregion
+
+    //region init usb manager
+    private MyUsbManager mUsbManager;
+
+    private void initUsbManager() {
+        mUsbManager = new MyUsbManager();
+        mUsbManager.init(this);
+        mUsbManager.addObserver(new MyUsbOberver() {
+            @Override
+            public void onConnectionChanged(int size, List<UsbDevice> devices) {
+                fillGameControllerCountInfo();
+            }
+        });
+    }
+    //endregion
+
+    private void fillGameControllerCountInfo() {
+        String section = "GameControllerCount";
+        clearSection(section);
+        List<String> infos = new ArrayList<String>();
+
+        //inputdevice
+        int                          gameControlerCount = 0;
+        List<InputDevice>            gameControllers    = new ArrayList<InputDevice>();
+        int[]                        deviceIds          = mInputManager.getInputDeviceIds();
+        HashMap<String, InputDevice> gameControllersMap = new HashMap<String, InputDevice>();
+        for (int deviceId : deviceIds) {
+            InputDevice dev     = mInputManager.getInputDevice(deviceId);
+            String      name    = dev.getName();
+            int         sources = dev.getSources();
+            // if the device is a gamepad/joystick, create a ship to represent it
+            if (isGameController(sources)) {
+                gameControlerCount++;
+                gameControllers.add(dev);
+                gameControllersMap.put(name, dev);
+//                Logger.log(dev.toString());
+            }
+        }
+        infos.add("AllGameControllerCount: " + gameControlerCount + ";  " +
+                "\nGameControllers:" + gameControllers.toString());
+
+        //bluetooth devices
+        List<BluetoothDevice>            btDevices               = mBtManager.getConnectedDevices();
+        List<BluetoothDevice>            btGameControllerDevices = new ArrayList<BluetoothDevice>();
+        HashMap<String, BluetoothDevice> btGameControllersMap    = new HashMap<String, BluetoothDevice>();
+        if (btDevices != null && btDevices.size() != 0) {
+            for (BluetoothDevice dev : btDevices) {
+                if (dev.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.PERIPHERAL) {
+                    btGameControllerDevices.add(dev);
+                    btGameControllersMap.put(dev.getName(), dev);
+//                    Logger.log(dev);
+                }
+            }
+        }
+        infos.add("BluetoothGameControllerCount: " + btGameControllerDevices.size() + ";  " +
+                "\nGameControllers:" + btGameControllerDevices.toString());
+
+
+        //otg devices
+        boolean isNameRefCorrect = true;
+        for (BluetoothDevice dev : btGameControllerDevices) {
+            String name = dev.getName();
+            if (!gameControllersMap.containsKey(name)) {
+                isNameRefCorrect = false;
+                break;
+            }
+        }
+
+        List<InputDevice> otgGameControllerDevices = new ArrayList<InputDevice>();
+        if (gameControlerCount > btGameControllerDevices.size()) {
+
+            if (isNameRefCorrect) {
+                for (InputDevice dev : gameControllers) {
+                    // if the device is a gamepad/joystick, create a ship to represent it
+                    String devName = dev.getName();
+                    if (btGameControllersMap.containsKey(devName)) {
+                        continue;
+                    } else {
+                        otgGameControllerDevices.add(dev);
+                    }
+//                Logger.log(dev.toString());
+                }
+            } else {
+                int otgGameControlerCount = gameControlerCount - btGameControllerDevices.size();
+                //TODO: set custom name. OTG1、OTG2...
+
+            }
+
+        }
+        String otgInfo = "OTGGameControllerCount: " + (gameControlerCount - btGameControllerDevices.size()) + "\n";
+        if (isNameRefCorrect) otgInfo += "GameControllers:" + otgGameControllerDevices.toString();
+        infos.add(otgInfo);
+
+        //usb devices
+//        HashMap<String, UsbDevice> usbDevices               = mUsbManager.getDeviceList();
+//        List<InputDevice>          usbGameControllerDevices = new ArrayList<InputDevice>();
+//        if (usbDevices != null && usbDevices.size() != 0) {
+//            Collection<UsbDevice> collection = usbDevices.values();
+//            Iterator<UsbDevice>   iterator   = collection.iterator();
+//
+//            while (iterator.hasNext()) {
+//                UsbDevice   dev  = iterator.next();
+//                int deviceId = dev.getDeviceId();//this deviceId is not input device_id.
+//                InputDevice idev = mInputManager.getInputDevice(deviceId);
+//                if (idev==null)continue;
+//                if (isGameController(idev.getSources())) {
+//                    usbGameControllerDevices.add(idev);
+////                    Logger.log(idev.toString());
+//                }
+//            }
+//        }
+//        infos.add("UsbGameControllerCount: " + usbGameControllerDevices.size() + ";  \nGameControllers:" + usbGameControllerDevices.toString());
+
+        addSection(section, infos);
+    }
+
+    private boolean isGameController(int sources) {
+        boolean ret = false;
+        if (((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
+                ((sources & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK)) {
+            // if the device has a gamepad or joystick
+            ret = true;
+        }
+
+        return ret;
+    }
+    //endregion
+
+    //region Section Common
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)//4.2.2
     private double getScreenSizeOfDevice2() {
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(point);
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        double x = Math.pow(point.x / dm.xdpi, 2);
-        double y = Math.pow(point.y / dm.ydpi, 2);
-        double screenInches = Math.sqrt(x + y);
+        DisplayMetrics dm           = getResources().getDisplayMetrics();
+        double         x            = Math.pow(point.x / dm.xdpi, 2);
+        double         y            = Math.pow(point.y / dm.ydpi, 2);
+        double         screenInches = Math.sqrt(x + y);
 
         return screenInches;
     }
@@ -246,4 +440,5 @@ public class DeviceInfoActivity extends ActionBarActivity {
             public TextView info;
         }
     }
+    //endregion
 }

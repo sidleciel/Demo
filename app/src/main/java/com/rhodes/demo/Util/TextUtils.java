@@ -20,31 +20,33 @@ import java.util.regex.Pattern;
 public class TextUtils {
     /**
      * \是否包含特殊字符
+     *
      * @param text
      * @return
      */
-    public static boolean hasDefaultText(String text){
-    String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
-        Pattern p = Pattern.compile(regEx);
-        Matcher m = p.matcher(text);
+    public static boolean hasDefaultText(String text) {
+        String  regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+        Pattern p     = Pattern.compile(regEx);
+        Matcher m     = p.matcher(text);
         return m.find();
     }
-    public static int checkChinesAndEngAllSize(String string){
-        char[] array = string.toCharArray();
-        int chineseCount = 0;
-        int englishCount = 0;
+
+    public static int checkChinesAndEngAllSize(String string) {
+        char[] array        = string.toCharArray();
+        int    chineseCount = 0;
+        int    englishCount = 0;
         for (int i = 0; i < array.length; i++) {
-            if((char)(byte)array[i]!=array[i]){
+            if ((char) (byte) array[i] != array[i]) {
                 chineseCount++;
-            }else{
+            } else {
                 englishCount++;
             }
         }
-        return chineseCount*2+englishCount;
+        return chineseCount * 2 + englishCount;
     }
     /**
      * 添加下划线
-     * 
+     *
      * @param context
      *            上下文
      * @param textView
@@ -67,16 +69,14 @@ public class TextUtils {
 
     /**
      * 获取括号中的国家区号
-     * 
-     * @param text
-     *            带有括号的国家区号
-     * @param defaultText
-     *            默认的国家区号(在获取错误时返回该值)
+     *
+     * @param text        带有括号的国家区号
+     * @param defaultText 默认的国家区号(在获取错误时返回该值)
      * @return
      */
     public static String getCountryCodeBracketsInfo(String text, String defaultText) {
         if (text.contains("(") && text.contains(")")) {
-            int leftBrackets = text.indexOf("(");
+            int leftBrackets  = text.indexOf("(");
             int rightBrackets = text.lastIndexOf(")");
             if (leftBrackets < rightBrackets) {
                 return "+" + text.substring(leftBrackets + 1, rightBrackets);
@@ -84,25 +84,22 @@ public class TextUtils {
         }
         if (defaultText != null) {
             return defaultText;
-        }
-        else {
+        } else {
             return text;
         }
     }
 
     /**
      * 根据月日获取星座
-     * 
-     * @param month
-     *            月
-     * @param day
-     *            日
+     *
+     * @param month 月
+     * @param day   日
      * @return
      */
     public static String getConstellation(int month, int day) {
-        String[] constellationArr = { "水瓶座", "双鱼座", "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座",
-                "天秤座", "天蝎座", "射手座", "魔羯座" };
-        int[] constellationEdgeDay = { 20, 19, 21, 21, 21, 22, 23, 23, 23, 23, 22, 22 };
+        String[] constellationArr = {"水瓶座", "双鱼座", "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座",
+                "天秤座", "天蝎座", "射手座", "魔羯座"};
+        int[] constellationEdgeDay = {20, 19, 21, 21, 21, 22, 23, 23, 23, 23, 22, 22};
         if (day < constellationEdgeDay[month]) {
             month = month - 1;
         }
@@ -115,35 +112,28 @@ public class TextUtils {
 
     /**
      * 根据年月日获取年龄
-     * 
-     * @param year
-     *            年
-     * @param month
-     *            月
-     * @param day
-     *            日
+     *
+     * @param year  年
+     * @param month 月
+     * @param day   日
      * @return
      */
     public static int getAge(int year, int month, int day) {
-        int age = 0;
+        int      age      = 0;
         Calendar calendar = Calendar.getInstance();
         if (calendar.get(Calendar.YEAR) == year) {
             if (calendar.get(Calendar.MONTH) == month) {
                 if (calendar.get(Calendar.DAY_OF_MONTH) >= day) {
                     age = calendar.get(Calendar.YEAR) - year + 1;
-                }
-                else {
+                } else {
                     age = calendar.get(Calendar.YEAR) - year;
                 }
-            }
-            else if (calendar.get(Calendar.MONTH) > month) {
+            } else if (calendar.get(Calendar.MONTH) > month) {
                 age = calendar.get(Calendar.YEAR) - year + 1;
-            }
-            else {
+            } else {
                 age = calendar.get(Calendar.YEAR) - year;
             }
-        }
-        else {
+        } else {
             age = calendar.get(Calendar.YEAR) - year;
         }
         if (age < 0) {
@@ -154,9 +144,8 @@ public class TextUtils {
 
     /**
      * 判断文本框的内容是否为空
-     * 
-     * @param editText
-     *            需要判断是否为空的EditText对象
+     *
+     * @param editText 需要判断是否为空的EditText对象
      * @return boolean 返回是否为空,空(true),非空(false)
      */
     public static boolean isNull(EditText editText) {
@@ -169,14 +158,14 @@ public class TextUtils {
 
     /**
      * 返回指定长度的一串数字
-     * 
+     *
      * @param NumLen 数字串位数
      * @return
      */
     public static String getRandomNumStr(int NumLen) {
-        Random random = new Random(System.currentTimeMillis());
-        StringBuffer str = new StringBuffer();
-        int i, num;
+        Random       random = new Random(System.currentTimeMillis());
+        StringBuffer str    = new StringBuffer();
+        int          i, num;
         for (i = 0; i < NumLen; i++) {
             num = random.nextInt(10); // 0-10的随机数
             str.append(num);
@@ -186,33 +175,28 @@ public class TextUtils {
 
     /**
      * 获取Assets中的json文本
-     * 
-     * @param context
-     *            上下文
-     * @param name
-     *            文本名称
+     *
+     * @param context 上下文
+     * @param name    文本名称
      * @return
      */
     public static String getJson(Context context, String name) {
         // TODO 待清除
         if (name != null) {
-            String path = "json/" + name;
-            InputStream is = null;
+            String      path = "json/" + name;
+            InputStream is   = null;
             try {
                 is = context.getAssets().open(path);
                 return readTextFile(is);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 return null;
-            }
-            finally {
+            } finally {
                 try {
                     if (is != null) {
                         is.close();
                         is = null;
                     }
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
 
                 }
             }
@@ -222,14 +206,13 @@ public class TextUtils {
 
     /**
      * 从输入流中获取文本
-     * 
-     * @param inputStream
-     *            文本输入流
+     *
+     * @param inputStream 文本输入流
      * @return
      */
     public static String readTextFile(InputStream inputStream) {
         // TODO 待清除
-        String readedStr = "";
+        String         readedStr = "";
         BufferedReader br;
         try {
             br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -239,29 +222,29 @@ public class TextUtils {
             }
             br.close();
             inputStream.close();
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             return null;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return null;
         }
 
         return readedStr;
     }
+
     /**
      * 把中文转成Unicode码
+     *
      * @param str
      * @return
      */
-    public static String chinaToUnicode(String str){
-        String result="";
-        for (int i = 0; i < str.length(); i++){
+    public static String chinaToUnicode(String str) {
+        String result = "";
+        for (int i = 0; i < str.length(); i++) {
             int chr1 = (char) str.charAt(i);
-            if(chr1>=19968&&chr1<=171941){//汉字范围 \u4e00-\u9fa5 (中文)
-                result+="\\u" + Integer.toHexString(chr1);
-            }else{
-                result+=str.charAt(i);
+            if (chr1 >= 19968 && chr1 <= 171941) {//汉字范围 \u4e00-\u9fa5 (中文)
+                result += "\\u" + Integer.toHexString(chr1);
+            } else {
+                result += str.charAt(i);
             }
         }
         return result;

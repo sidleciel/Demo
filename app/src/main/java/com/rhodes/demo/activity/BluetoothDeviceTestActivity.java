@@ -19,30 +19,31 @@ import java.util.HashMap;
  * Created by xiet on 2015/9/11.
  */
 public class BluetoothDeviceTestActivity extends ActionBarActivity {
+    private final String TAG = "BluetoothDeviceTestActivity";
 
-    TextView L1;
-    TextView L2;
-    TextView R1;
-    TextView R2;
-    TextView LEFT;
-    TextView UP;
-    TextView RIGHT;
-    TextView DOWN;
-    TextView X;
-    TextView A;
-    TextView Y;
-    TextView B;
-    TextView SELECT;
-    TextView START;
+    TextView   L1;
+    TextView   L2;
+    TextView   R1;
+    TextView   R2;
+    TextView   LEFT;
+    TextView   UP;
+    TextView   RIGHT;
+    TextView   DOWN;
+    TextView   X;
+    TextView   A;
+    TextView   Y;
+    TextView   B;
+    TextView   SELECT;
+    TextView   START;
     AnalogView ANALOG_L;
     AnalogView ANALOG_R;
 
 
     View[] views;
-    Integer[] keycodes = new Integer[]{KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_BUTTON_L2, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_BUTTON_R2,
+    Integer[]              keycodes = new Integer[]{KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_BUTTON_L2, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_BUTTON_R2,
             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_DOWN,
             KeyEvent.KEYCODE_BUTTON_X, KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_BUTTON_Y, KeyEvent.KEYCODE_BUTTON_B, KeyEvent.KEYCODE_BUTTON_SELECT, KeyEvent.KEYCODE_BUTTON_START};
-    HashMap<Integer, View> map = new HashMap<Integer, View>();
+    HashMap<Integer, View> map      = new HashMap<Integer, View>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,8 @@ public class BluetoothDeviceTestActivity extends ActionBarActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        Logger.log(TAG, "dispatchKeyEvent", event);
+
         return super.dispatchKeyEvent(event) | processJoystickButton(event);
     }
 
@@ -82,7 +85,7 @@ public class BluetoothDeviceTestActivity extends ActionBarActivity {
     boolean processJoystickButton(KeyEvent event) {
         Logger.log(event.toString());
 
-        boolean ret = false;
+        boolean  ret  = false;
         TextView view = (TextView) map.get(event.getKeyCode());
 
         if (!isDpadButton(event.getKeyCode()))
@@ -133,6 +136,7 @@ public class BluetoothDeviceTestActivity extends ActionBarActivity {
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
+        Logger.log(TAG, "onGenericMotionEvent", event);
         return super.onGenericMotionEvent(event) | processJoystickAnalog(event);
     }
 
@@ -152,15 +156,11 @@ public class BluetoothDeviceTestActivity extends ActionBarActivity {
             ANALOG_L.draw(l_x, l_y);
             ANALOG_R.draw(r_x, r_y);
 
-            //support multiple gamepad controller
-            float hatX = event.getAxisValue(MotionEvent.AXIS_HAT_X);
-            float hatY = event.getAxisValue(MotionEvent.AXIS_HAT_Y);
-            Logger.log("processJoystickAnalog--DPAD_FLAG--> " + "deviceId=" + event.getDeviceId() + " hatX=" + hatX + " hatY=" + hatY);
-
             float lTrigger = event.getAxisValue(MotionEvent.AXIS_LTRIGGER);
             float rTrigger = event.getAxisValue(MotionEvent.AXIS_RTRIGGER);
             Logger.log("processJoystickAnalog--> " + " lTrigger=" + lTrigger + " rTrigger=" + rTrigger);
-            if (hatX == 0 && hatY == 0) {
+
+            if (getJoystickDpadCode(event) == 0) {
                 ret = true;
             }
         }
@@ -170,7 +170,9 @@ public class BluetoothDeviceTestActivity extends ActionBarActivity {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     int getJoystickDpadCode(MotionEvent event) {
-        int ret = 0;
+        //support multiple gamepad controller
+
+        int   ret  = 0;
         float hatX = event.getAxisValue(MotionEvent.AXIS_HAT_X);
         float hatY = event.getAxisValue(MotionEvent.AXIS_HAT_Y);
         if (hatX == -1) {
@@ -183,6 +185,7 @@ public class BluetoothDeviceTestActivity extends ActionBarActivity {
         } else if (hatY == 1) {
             ret |= KeyEvent.KEYCODE_DPAD_DOWN;
         }
+        Logger.log("getJoystickDpadCode--DPAD_FLAG==>", "deviceId=" + event.getDeviceId(), "hatX=" + hatX, "hatY=" + hatY, "keyCode=" + ret);
         return ret;
     }
 

@@ -10,6 +10,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.view.InputDevice;
+import com.rhodes.demo.BuildConfig;
 import com.rhodes.demo.Util.Logger;
 import com.rhodes.demo.joystick.DumpInputInfo;
 
@@ -55,21 +56,28 @@ public class MyUsbManager {
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+            String    action                 = intent.getAction();
+            UsbDevice usbDevice              = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+            String    deviceName             = usbDevice.getDeviceName();
+            String    deviceProductName      = "";
+            String    deviceManufacturerName = "";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                deviceProductName = usbDevice.getProductName();
+                deviceManufacturerName = usbDevice.getManufacturerName();
+            }
             Logger.log(usbDevice.toString() + " usbDeviceId=" + usbDevice.getDeviceId());
 
             if (action.equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
-                int[] deviceIds = InputDevice.getDeviceIds();
-                int inputDeviceId = deviceIds[deviceIds.length - 1];
-                InputDevice inputDevice = InputDevice.getDevice(inputDeviceId);
+                int[]       deviceIds     = InputDevice.getDeviceIds();
+                int         inputDeviceId = deviceIds[deviceIds.length - 1];
+                InputDevice inputDevice   = InputDevice.getDevice(inputDeviceId);
                 if (inputDevice != null) Logger.log(inputDevice.toString());
 
 
-                UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE); //拿到连接的设备
+                UsbDevice    device       = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE); //拿到连接的设备
                 InputManager inputManager = (InputManager) context.getSystemService(Context.INPUT_SERVICE);
-                int[] id_device = inputManager.getInputDeviceIds();//获取所有的设备id
-                InputDevice inputDevice1 = inputManager.getInputDevice(id_device[id_device.length - 1]);
+                int[]        id_device    = inputManager.getInputDeviceIds();//获取所有的设备id
+                InputDevice  inputDevice1 = inputManager.getInputDevice(id_device[id_device.length - 1]);
                 if (inputDevice1 != null) Logger.log(inputDevice1.toString());
             } else if (action.equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
             }
@@ -120,7 +128,7 @@ public class MyUsbManager {
     public void notifyUsbStateChanged() {
 
         HashMap<String, UsbDevice> attachedDevices = getDeviceList();
-        List<UsbDevice> devices = new ArrayList<UsbDevice>();
+        List<UsbDevice>            devices         = new ArrayList<UsbDevice>();
         if (attachedDevices != null && attachedDevices.size() != 0) {
             Iterator<UsbDevice> iterator = attachedDevices.values().iterator();
             while (iterator.hasNext()) {
@@ -136,7 +144,7 @@ public class MyUsbManager {
 
     public ArrayList getGameControllerIds() {
         ArrayList gameControllerDeviceIds = new ArrayList();
-        int[] deviceIds = InputDevice.getDeviceIds();
+        int[]     deviceIds               = InputDevice.getDeviceIds();
         for (int deviceId : deviceIds) {
             Logger.log("deviceId=" + deviceId);
             InputDevice dev = InputDevice.getDevice(deviceId);

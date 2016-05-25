@@ -35,6 +35,7 @@ import java.util.*;
 
 
 public class BluetoothDeviceActivity extends ActionBarActivity implements InputManagerCompat.InputDeviceListener {
+    private String TAG = "BluetoothDeviceActivity";
 
     private static final int REQUEST_ENABLE_BT     = 2;
     private static final int SHOW_DEVICE_ALL       = 1;
@@ -136,9 +137,9 @@ public class BluetoothDeviceActivity extends ActionBarActivity implements InputM
     public boolean onGenericMotionEvent(MotionEvent event) {
         //for joystick
 //        Logger.log(event);
-        float x = Wrapper.getAxisValue(event, MotionEvent.AXIS_X);
-        float y = Wrapper.getAxisValue(event, MotionEvent.AXIS_Y);
-        float z = Wrapper.getAxisValue(event, MotionEvent.AXIS_Z);
+        float x  = Wrapper.getAxisValue(event, MotionEvent.AXIS_X);
+        float y  = Wrapper.getAxisValue(event, MotionEvent.AXIS_Y);
+        float z  = Wrapper.getAxisValue(event, MotionEvent.AXIS_Z);
         float zr = Wrapper.getAxisValue(event, MotionEvent.AXIS_RZ);
 
         if ((event.getDevice().getSources() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0) {
@@ -207,7 +208,7 @@ public class BluetoothDeviceActivity extends ActionBarActivity implements InputM
                 Holder holder = null;
                 if (convertView == null) {
                     LayoutInflater inflater = LayoutInflater.from(BluetoothDeviceActivity.this);
-                    View view = inflater.inflate(R.layout.item_bluetooth_device_info, null);
+                    View           view     = inflater.inflate(R.layout.item_bluetooth_device_info, null);
                     holder = new Holder();
                     holder.infoTv = (TextView) view.findViewById(R.id.tv_device_info);
 
@@ -283,8 +284,8 @@ public class BluetoothDeviceActivity extends ActionBarActivity implements InputM
         if (showDevices.size() > 0) {
             // Loop through paired devices
             BluetoothDevice blueDev[] = new BluetoothDevice[showDevices.size()];
-            String item;
-            int i = 0;
+            String          item;
+            int             i         = 0;
             for (BluetoothDevice devicel : showDevices) {
                 blueDev[i] = devicel;
                 item = blueDev[i].getName() + ": " + blueDev[i].getAddress();
@@ -453,7 +454,11 @@ public class BluetoothDeviceActivity extends ActionBarActivity implements InputM
     }
 
     private void disconnectDevice(BluetoothDevice device) {
-
+        try {
+            ClassUtil.removeBond(device.getClass(),device);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void connectDevice(BluetoothDevice device) {
@@ -558,12 +563,12 @@ public class BluetoothDeviceActivity extends ActionBarActivity implements InputM
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     private void printAccessory() {
         try {
-            HashMap<String, UsbDevice> map = MyUsbManager.getInstance().getDeviceList();
-            Set<Map.Entry<String, UsbDevice>> set = map.entrySet();
+            HashMap<String, UsbDevice>             map      = MyUsbManager.getInstance().getDeviceList();
+            Set<Map.Entry<String, UsbDevice>>      set      = map.entrySet();
             Iterator<Map.Entry<String, UsbDevice>> iterator = set.iterator();
             while (iterator.hasNext()) {
-                Map.Entry<String, UsbDevice> entry = iterator.next();
-                UsbDevice usbDevice = entry.getValue();
+                Map.Entry<String, UsbDevice> entry     = iterator.next();
+                UsbDevice                    usbDevice = entry.getValue();
                 Logger.log(entry.getKey(), usbDevice.toString());
 
                 printUsbDeviceProductInfo(usbDevice);
@@ -646,6 +651,7 @@ public class BluetoothDeviceActivity extends ActionBarActivity implements InputM
 
     //InputDevice section
 
+    //region InputManagerCompat
     InputManagerCompat mInputManager;
     protected List<Integer> gamepadDeviceIds;
 
@@ -668,7 +674,7 @@ public class BluetoothDeviceActivity extends ActionBarActivity implements InputM
         if (deviceIds != null && deviceIds.length != 0)
             for (int deviceId : deviceIds) {
                 InputDevice inputDevice = mInputManager.getInputDevice(deviceId);
-                int sources = (inputDevice == null) ? 0 : inputDevice.getSources();
+                int         sources     = (inputDevice == null) ? 0 : inputDevice.getSources();
 
 //                if (!isExternal(inputDevice)) continue;// API16
                 // if the device is a gamepad/joystick, create a ship to represent it
@@ -696,13 +702,13 @@ public class BluetoothDeviceActivity extends ActionBarActivity implements InputM
             return;
 
         InputDevice inputDevice = mInputManager.getInputDevice(deviceId);
-        int sources = (inputDevice == null) ? 0 : inputDevice.getSources();
+        int         sources     = (inputDevice == null) ? 0 : inputDevice.getSources();
         // if the device is a gamepad/joystick, create a ship to represent it
         if (((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD)
                 || ((sources & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK)) {
             gamepadDeviceIds.add(deviceId);
             // if the device has a gamepad or joystick
-            Logger.log(inputDevice.toString());
+            Logger.log(TAG, "onInputDeviceAdded", inputDevice.toString());
             Toast.makeText(this, "手柄已连接", Toast.LENGTH_SHORT).show();
         }
 
@@ -726,11 +732,12 @@ public class BluetoothDeviceActivity extends ActionBarActivity implements InputM
 
         notifyDeviceCount();
     }
+    //endregion
 
     void notifyDeviceCount() {
-        int allCount = 0;
+        int allCount      = 0;
         int bluetoothSize = 0;
-        int usbSize = 0;
+        int usbSize       = 0;
 
         refreshGamepadDeviceIds();
         if (gamepadDeviceIds != null) allCount = gamepadDeviceIds.size();

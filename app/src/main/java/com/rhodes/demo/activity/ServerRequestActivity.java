@@ -2,7 +2,9 @@ package com.rhodes.demo.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import com.rhodes.demo.R;
+import com.rhodes.demo.Util.HttpUtils;
 import com.rhodes.demo.Util.Logger;
 
 import java.io.ByteArrayOutputStream;
@@ -21,7 +23,8 @@ public class ServerRequestActivity extends Activity {
 //    String URL_ONLINE = "http://ctapi.mg3721.com/stdserver/api";
 //    String Json = "{\"deviceid\":\"865852029694252\",\"messages\":{\"args\":{\"pn\":1},\"modeltype\":\"getCommunityBanner\"},\"requesttype\":\"load\",\"sign\":\"c21431c683e41e67267bd80d4223da27\",\"version\":\"16_1.5.0\"}";
     String URL_OFFLINE = "http://192.168.78.5:10001/forum/forum/follow";
-    String URL_ONLINE  = "http://192.168.78.5:10001/forum/forum/follow";
+    //    String URL_ONLINE  = "http://192.168.78.5:10001/forum/forum/follow";
+    String URL_ONLINE  = "http://anv3.frapi.papa91.com/forum/forum/plate_detail?fid=14&uid=3759491&token=vPdyHgsc8FrbXB2L";
     String Json        = "{\"fid\":1,\"uid\":30061,\"token\":\"QQLT87ByB4VVZvyb\"}";
     String postResult;
 
@@ -31,24 +34,28 @@ public class ServerRequestActivity extends Activity {
         setContentView(R.layout.activity_server_request);
         new Thread() {
             public void run() {
-                boolean online = false;
-                postResult = doHttpPost(Json, online ? URL_ONLINE : URL_OFFLINE);
+                boolean online = true;
+//                postResult = doHttpPost(Json, online ? URL_ONLINE : URL_OFFLINE);
+                postResult = HttpUtils.doGetRequest(online ? URL_ONLINE : URL_OFFLINE);
+
             }
         }.start();
     }
 
     public static String doHttpPost(String xmlInfo, String URL) {
         Logger.log(TAG + "-->" + "send info:" + xmlInfo);
-        byte[] xmlData = xmlInfo.getBytes();
-        InputStream instr = null;
-        java.io.ByteArrayOutputStream out = null;
+        byte[]                        xmlData = xmlInfo.getBytes();
+        InputStream                   instr   = null;
+        java.io.ByteArrayOutputStream out     = null;
         try {
-            java.net.URL url = new java.net.URL(URL);
+            java.net.URL  url    = new java.net.URL(URL);
             URLConnection urlCon = url.openConnection();
             urlCon.setDoOutput(true);
             urlCon.setDoInput(true);
             urlCon.setUseCaches(false);
-            urlCon.setRequestProperty("Content-Type", "text/xml");
+            String contentType = "text/plain";
+//            contentType="text/xml";
+            urlCon.setRequestProperty("Content-Type", contentType);
             urlCon.setRequestProperty("Content-length", String.valueOf(xmlData.length));
             Logger.log(TAG + "-->" + String.valueOf(xmlData.length));
             DataOutputStream printout = new DataOutputStream(urlCon.getOutputStream());
@@ -56,7 +63,7 @@ public class ServerRequestActivity extends Activity {
             printout.flush();
             printout.close();
             instr = urlCon.getInputStream();
-            byte[] bis = input2byte(instr);
+            byte[] bis            = input2byte(instr);
             String ResponseString = new String(bis, "UTF-8");
             if ((ResponseString == null) || ("".equals(ResponseString.trim()))) {
                 Logger.log(TAG + "-->" + "receive null");
@@ -80,8 +87,8 @@ public class ServerRequestActivity extends Activity {
 
     public static final byte[] input2byte(InputStream inStream) throws IOException {
         ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
-        byte[] buff = new byte[100];
-        int rc = 0;
+        byte[]                buff       = new byte[100];
+        int                   rc         = 0;
         while ((rc = inStream.read(buff, 0, 100)) > 0) {
             swapStream.write(buff, 0, rc);
         }

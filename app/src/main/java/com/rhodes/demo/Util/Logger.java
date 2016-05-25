@@ -6,11 +6,12 @@ import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import com.rhodes.demo.BuildConfig;
 import com.rhodes.demo.wrapper.Wrapper;
 
 public class Logger {
     private static final String TAG = Logger.class.getSimpleName();
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = BuildConfig.DEBUG;
 
     public static void log(String... s) {
         if (!DEBUG) return;//DEBUG
